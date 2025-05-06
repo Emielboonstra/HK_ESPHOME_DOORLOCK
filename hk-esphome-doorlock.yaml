@@ -94,15 +94,15 @@ light:
         to: 1
     effects:
       - addressable_twinkle:
-          name: "doorlock_effect"
+          name: doorlock_effect
           twinkle_probability: 50%
           progress_interval: 5s
       - addressable_twinkle:
-          name: "error_effect"
+          name: error_effect
           twinkle_probability: 50%
           progress_interval: 5s
       - addressable_twinkle:
-          name: "Twinkle"
+          name: Twinkle
           twinkle_probability: 50%
 
 button:
