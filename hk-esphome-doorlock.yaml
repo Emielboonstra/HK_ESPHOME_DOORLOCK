@@ -94,15 +94,7 @@ light:
         to: 1
     effects:
       - addressable_twinkle:
-          name: doorlock_effect
-          twinkle_probability: 50%
-          progress_interval: 5s
-      - addressable_twinkle:
-          name: error_effect
-          twinkle_probability: 50%
-          progress_interval: 5s
-      - addressable_twinkle:
-          name: Twinkle
+          name: "Twinkle"
           twinkle_probability: 50%
 
 button:
@@ -152,7 +144,7 @@ script:
           green: 0%
           blue: 0%
           id: hk_esphome_leds
-          effect: "error_effect"
+          effect: "Twinkle"
           
 
   - id: doorlock_effect
@@ -163,7 +155,7 @@ script:
           green: 0%
           blue: 100%
           id: hk_esphome_leds
-          effect: "doorlock_effect"
+          effect: "Twinkle"
 
   - id: connect
     then:
