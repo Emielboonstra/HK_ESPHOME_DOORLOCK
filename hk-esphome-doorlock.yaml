@@ -98,34 +98,34 @@ light:
           name: "doorlock_effect"
           update_interval: 100ms
           lambda: |
-          id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
-          delay(150);
-          id(hk_esphome_leds).turn_off();
-          delay(150);
-          id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
-          delay(150);
-          id(hk_esphome_leds).turn_off();
-          delay(150);
-          id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
-          delay(150);
-          id(hk_esphome_leds).turn_off();
-          delay(150);
-          id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
+            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
+            delay(150);
+            id(hk_esphome_leds).turn_off();
+            delay(150);
+            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
+            delay(150);
+            id(hk_esphome_leds).turn_off();
+            delay(150);
+            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
+            delay(150);
+            id(hk_esphome_leds).turn_off();
+            delay(150);
+            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
       - addressable_lambda:
           name: "error_effect"
           update_interval: 100ms
           lambda: |
-          id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
-          delay(150);
-          id(hk_esphome_leds).turn_off();
-          delay(150);
-          id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
-          delay(150);
-          id(hk_esphome_leds).turn_off();
-          delay(150);
-          id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
-          delay(150);
-          id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
+            id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
+            delay(150);
+            id(hk_esphome_leds).turn_off();
+            delay(150);
+            id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
+            delay(150);
+            id(hk_esphome_leds).turn_off();
+            delay(150);
+            id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
+            delay(150);
+            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
       - addressable_twinkle:
           name: "Twinkle"
           twinkle_probability: 50%
