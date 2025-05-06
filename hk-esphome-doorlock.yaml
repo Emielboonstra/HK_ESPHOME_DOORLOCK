@@ -39,7 +39,7 @@ switch:
 
 lock:
   - platform: template
-    id: "doorlock"
+    id: doorlock
     name: "DoorLock"
     optimistic: True
     lock_action:
@@ -48,11 +48,10 @@ lock:
       - switch.turn_off: lockrelay
     on_lock:
       - logger.log: "Door Locked!"
-      - lambda: id(doorlock).execute();
-      
+      - lambda: id(doorlock_effect).execute()
     on_unlock:
       - logger.log: "Door Unlocked!"
-      - lambda: id(doorlock).execute();
+      - lambda: id(doorlock_effect).execute()
 
 
 spi:
@@ -175,11 +174,13 @@ script:
           id: hk_esphome_leds
           effect: "error_effect"
           
-  - id: doorlock
+
+  - id: doorlock_effect
     then:
       - light.turn_on:
           id: hk_esphome_leds
           effect: "doorlock_effect"
+
   - id: connect
     then:
       - if:
