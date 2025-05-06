@@ -171,12 +171,13 @@ homekit:
 script:
   - id: error
     then: 
-      - light.turn.on:
+      - light.turn_on:
           id: hk_esphome_leds
           effect: "error_effect"
+          
   - id: doorlock
     then:
-      - light.turn.on:
+      - light.turn_on:
           id: hk_esphome_leds
           effect: "doorlock_effect"
   - id: connect
