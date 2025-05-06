@@ -93,38 +93,14 @@ light:
         from: 0
         to: 1
     effects:
-      - addressable_lambda:
+      - addressable_twinkle:
           name: "doorlock_effect"
-          update_interval: 100ms
-          lambda: |
-            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
-            delay(150);
-            id(hk_esphome_leds).turn_off();
-            delay(150);
-            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
-            delay(150);
-            id(hk_esphome_leds).turn_off();
-            delay(150);
-            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
-            delay(150);
-            id(hk_esphome_leds).turn_off();
-            delay(150);
-            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
-      - addressable_lambda:
-          name: "error_effect"
-          update_interval: 100ms
-          lambda: |
-            id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
-            delay(150);
-            id(hk_esphome_leds).turn_off();
-            delay(150);
-            id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
-            delay(150);
-            id(hk_esphome_leds).turn_off();
-            delay(150);
-            id(hk_esphome_leds).turn_on().set_rgb(1.0, 0, 0);
-            delay(150);
-            id(hk_esphome_leds).turn_on().set_rgb(0, 0, 1.0);
+          twinkle_probability: 50%
+          progress_interval: 5s
+      - addressable_twinkle:
+          name: "error_efffect"
+          twinkle_probability: 50%
+          progress_interval: 5s
       - addressable_twinkle:
           name: "Twinkle"
           twinkle_probability: 50%
@@ -171,6 +147,10 @@ script:
   - id: error
     then: 
       - light.turn_on:
+          brightness: 100%
+          red: 100%
+          green: 0%
+          blue: 0%
           id: hk_esphome_leds
           effect: "error_effect"
           
@@ -178,6 +158,10 @@ script:
   - id: doorlock_effect
     then:
       - light.turn_on:
+          brightness: 100%
+          red: 0%
+          green: 0%
+          blue: 100%
           id: hk_esphome_leds
           effect: "doorlock_effect"
 
@@ -190,8 +174,8 @@ script:
             - light.turn_on:
                 brightness: 100%
                 red: 0%
-                green: 0%
-                blue: 100%
+                green: 100%
+                blue: 0%
                 id: hk_esphome_leds
                 effect: "Twinkle"
           else:
