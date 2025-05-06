@@ -1,15 +1,24 @@
 esphome:
-  name: hk-esphome-doorlock
-  friendly_name: HK esphome Doorlock
+  name: homekey-esphome-doorlock
+  friendly_name: HomeKey ESPHOME Doorlock
   on_boot:
     priority: 375
     then:
       - light.turn_on:
-          id: rgb_led
+          id: hk_esphome_leds
           brightness: 100%
+          red: 0
+          green: 1.0
+          blue: 0
+          effect: none
+      - delay: 1s
+      - light.turn_on:
+          id: hk_esphome_leds
+          brightness: 25%
           red: 0
           green: 0
           blue: 1.0
+          effect: "Twinkle"
 
 esp32:
   board: esp32dev
@@ -20,39 +29,38 @@ esp32:
       CONFIG_LWIP_MAX_SOCKETS: "16"
       CONFIG_MBEDTLS_HKDF_C: y
 
-wifi:
-  on_connect:
-    - script.execute: connect
-  on_disconnect:
-    - script.execute: disconnect
-
+# Enable logging
 logger:
   level: DEBUG
 
-switch:
-  - platform: gpio
-    internal: true
-    id: "lockrelay"
-    name: "lockrelay"
-    pin: GPIO26
+wifi:
+  power_save_mode: none
+  on_connect:
+    - script.execute: connect_wifi
+  on_disconnect:
+    - script.execute: disconnect
 
-
+captive_portal:
+    
 lock:
   - platform: template
     id: doorlock
     name: "DoorLock"
     optimistic: True
     lock_action:
-      - switch.turn_on: lockrelay
+      - switch.turn_on: lockrelayna
+      - switch.turn_on: lockrelaync
     unlock_action:
-      - switch.turn_off: lockrelay
+      - switch.turn_off: lockrelayna
+      - switch.turn_off: lockrelaync
     on_lock:
-      - logger.log: "Door Locked!"
-      - lambda: id(doorlock_effect).execute()
+    - logger.log: "Door Locked!"
+    - lambda: |
+        id(doorlock_effect).execute();
     on_unlock:
-      - logger.log: "Door Unlocked!"
-      - lambda: id(doorlock_effect).execute()
-
+    - logger.log: "Door Unlocked!"
+    - lambda: |
+        id(doorlock_effect).execute();
 
 spi:
   clk_pin: 18
@@ -64,10 +72,65 @@ pn532_spi:
   cs_pin: 5
   update_interval: 100ms
 
-
 external_components:
   source: github://rednblkx/HAP-ESPHome@main
   refresh: 0s
+
+switch:
+  - platform: gpio
+    internal: true
+    id: "lockrelayna"
+    name: "lockrelayna"
+    pin: GPIO26
+  - platform: gpio
+    internal: true
+    inverted: true
+    id: "lockrelaync"
+    name: "lockrelaync"
+    pin: GPIO25
+
+
+button:
+  - platform: homekit_base
+    factory_reset:
+      name: "Reset HomeKit pairings"
+
+homekit_base:  
+  meta:
+    name: "HomeKey ESPHOME Doorlockbase"
+    manufacturer: "Boontjes"
+    model: "ESP32 Lockbase"
+    serial_number: "123456789"
+    fw_rev: "0.1.1"
+  setup_code: "111-22-333" 
+  setup_id: "DL01"  
+
+homekit:
+  lock:
+    - id: doorlock
+      meta:
+        manufacturer: "Boontjes"
+        model: "ESP32 lock"
+        serial_number: "42424242"
+        fw_rev: "0.1.1"
+      nfc_id: nfc_spi_module
+      on_hk_success:
+        lambda: |-
+          ESP_LOGI("HOMEKEY", "IssuerID: %s", x.c_str());
+          ESP_LOGI("HOMEKEY", "EndpointID: %s", y.c_str());
+          if (id(doorlock).state == LOCK_STATE_LOCKED) {
+              id(doorlock).unlock();
+          } else {
+              id(doorlock).lock();
+          }
+      on_hk_fail:
+        lambda: |-
+          ESP_LOGI("GSDGSGS", "IT FAILED :(");
+          id(error).execute();
+      hk_hw_finish: "SILVER"
+
+
+
 
 
 light:
@@ -77,7 +140,7 @@ light:
     pin: GPIO15
     chipset: WS2812
     max_refresh_rate: 15ms
-    num_leds: 1
+    num_leds: 3
     rgb_order: GRB
     rmt_symbols: 256
     default_transition_length: 0ms
@@ -91,99 +154,78 @@ light:
     segments:
       - id: leds_internal
         from: 0
-        to: 1
+        to: 2
     effects:
       - addressable_twinkle:
           name: "Twinkle"
           twinkle_probability: 50%
 
-button:
-  - platform: homekit_base
-    factory_reset:
-      name: "Reset HomeKit pairings"
-
-homekit_base:
-  meta:
-    name: "Doorlockbase"
-    manufacturer: "Boontjes"
-    model: "ESP32 Lockbase"
-    serial_number: "123456789"
-    fw_rev: "0.1.1"
-  setup_code: "111-22-333"   
-  setup_id: "DL01"  
-
-homekit:
-  lock:
-    - id: doorlock
-      meta:
-        manufacturer: "Boontjes"
-        model: "ESP32 lock"
-        serial_number: "42424242"
-        fw_rev: "0.1.1"
-      nfc_id: nfc_spi_module
-      on_hk_success:
-        lambda: |
-          ESP_LOGI("HEREHERE", "IssuerID: %s", x.c_str());
-          ESP_LOGI("HEREHERE", "EndpointID: %s", y.c_str());
-          if (id(doorlock).state == LOCK_STATE_LOCKED) {
-              id(doorlock).unlock();
-          } else {
-              id(doorlock).lock();
-          }
-      on_hk_fail:
-        lambda: id(error).execute();
-      hk_hw_finish: "SILVER"
-
-
 script:
-  - id: error
-    then: 
-      - light.turn_on:
-          brightness: 100%
-          red: 100%
-          green: 0%
-          blue: 0%
-          id: hk_esphome_leds
-          effect: "Twinkle"
-          
-
   - id: doorlock_effect
     then:
       - light.turn_on:
-          brightness: 100%
-          red: 0%
-          green: 0%
-          blue: 100%
           id: hk_esphome_leds
+          brightness: 100%
+          red: 0
+          green: 0
+          blue: 1
           effect: "Twinkle"
+      - delay: 2s
+      - light.turn_on:
+          id: hk_esphome_leds
+          brightness: 25%
+          red: 0
+          green: 0
+          blue: 1
+          effect: none
 
-  - id: connect
+  - id: connect_wifi
     then:
       - if:
           condition:
             wifi.connected:
           then:
             - light.turn_on:
-                brightness: 100%
-                red: 0%
-                green: 100%
-                blue: 0%
                 id: hk_esphome_leds
+                brightness: 100%
+                red: 0
+                green: 1
+                blue: 0
                 effect: "Twinkle"
-          else:
+            - delay: 2s
             - light.turn_on:
-                brightness: 100%
-                red: 100%
-                green: 89%
-                blue: 71%
                 id: hk_esphome_leds
-                effect: "none"
+                brightness: 25%
+                red: 0
+                green: 0
+                blue: 1
+                effect: none
+
   - id: disconnect
     then:
       - light.turn_on:
+          id: hk_esphome_leds
           brightness: 100%
           red: 1
           green: 0
           blue: 0
-          id: hk_esphome_leds
           effect: "none"
+
+
+  - id: error
+    then: 
+      - light.turn_on:
+          id: hk_esphome_leds
+          brightness: 100%
+          red: 1
+          green: 0
+          blue: 0
+          effect: "Twinkle"
+      - delay: 2s
+      - light.turn_on:
+          id: hk_esphome_leds
+          brightness: 25%
+          red: 0
+          green: 0
+          blue: 1
+          effect: none
