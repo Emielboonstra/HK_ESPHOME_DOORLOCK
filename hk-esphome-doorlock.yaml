@@ -161,7 +161,7 @@ script:
           green: 0
           blue: 1
           effect: "Twinkle"
-      - delay: 2s
+      - delay: 10s
       - light.turn_on:
           id: hk_esphome_leds
           brightness: 25%
