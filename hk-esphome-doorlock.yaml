@@ -48,11 +48,9 @@ lock:
     name: "DoorLock"
     optimistic: True
     lock_action:
-      - switch.turn_on: lockrelayna
-      - switch.turn_on: lockrelaync
+      - switch.turn_on: lockrelay
     unlock_action:
-      - switch.turn_off: lockrelayna
-      - switch.turn_off: lockrelaync
+      - switch.turn_off: lockrelay
     on_lock:
     - logger.log: "Door Locked!"
     - lambda: |
@@ -79,15 +77,9 @@ external_components:
 switch:
   - platform: gpio
     internal: true
-    id: "lockrelayna"
-    name: "lockrelayna"
+    id: "lockrelay"
+    name: "lockrelay"
     pin: GPIO26
-  - platform: gpio
-    internal: true
-    inverted: true
-    id: "lockrelaync"
-    name: "lockrelaync"
-    pin: GPIO25
 
 
 button:
