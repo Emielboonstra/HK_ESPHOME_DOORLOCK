@@ -88,14 +88,20 @@ button:
       name: "Reset HomeKit pairings"
 
 homekit_base:  
+  meta:
+    name: "HomeKey ESPHOME Doorlock base"
+    manufacturer: "Boontjes"
+    model: "HomeKey ESPHOME Doorlock base"
+    serial_number: "123456789"
+    fw_rev: "0.1.1"
   setup_code: "111-22-333" 
 
 homekit:
   lock:
-    - id: doorlock
+    - id: homekey-esphome-doorlock
       meta:
         manufacturer: "Boontjes"
-        model: "ESP32 lock"
+        model: "HomeKey ESPHOME Doorlock"
         serial_number: "42424242"
         fw_rev: "0.1.1"
       nfc_id: nfc_spi_module
@@ -125,7 +131,7 @@ light:
     pin: GPIO15
     chipset: WS2812
     max_refresh_rate: 15ms
-    num_leds: 3
+    num_leds: 5
     rgb_order: GRB
     rmt_symbols: 256
     default_transition_length: 0ms
@@ -139,7 +145,7 @@ light:
     segments:
       - id: leds_internal
         from: 0
-        to: 2
+        to: 4
     effects:
       - addressable_twinkle:
           name: "Twinkle"
