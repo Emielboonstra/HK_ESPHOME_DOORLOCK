@@ -128,7 +128,7 @@ light:
   # Hardware LED. Not used because remapping needed
   - platform: esp32_rmt_led_strip
     id: leds_internal
-    pin: GPIO13
+    pin: GPIO15
     chipset: WS2812
     max_refresh_rate: 15ms
     num_leds: 5
